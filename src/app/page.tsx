@@ -1,3 +1,5 @@
-export default function Home() {
-  return null;
+import Carousel from '@/components/carousel';
+
+export default function MainPage() {
+	return <Carousel />;
 }
