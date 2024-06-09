@@ -1,46 +1,69 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-const slides = ['banner1', 'banner2', 'banner3', 'banner4', 'banner5', 'banner6', 'banner7'];
+const banners = ['banner1', 'banner2', 'banner3', 'banner4', 'banner5', 'banner6', 'banner7'];
 
 const Carousel = () => {
+	const [imageIndex, setImageIndex] = useState<number>(0);
+	const [isBannerHovered, setIsBannerHovered] = useState<boolean>(false);
+
+	function showPreviousBanner() {
+		setImageIndex((index) => {
+			if (index === 0) return banners.length - 1;
+			return index - 1;
+		});
+	}
+
+	function showNextBanner() {
+		setImageIndex((index) => {
+			if (index === banners.length - 1) return 0;
+			return index + 1;
+		});
+	}
+
+	useEffect(() => {
+		const intervalID = setInterval(showNextBanner, 3000);
+
+		return () => clearInterval(intervalID);
+	}, []);
+
 	return (
-		<div className="overflow-hidden">
-			<div className="border border-gray-300 "></div>
-			<div className="rail flex relative w-screen max-w-[1920px] h-[600px] m-auto translate-x-[-100%]">
-				{slides.map((slide) => (
-					<div
-						key={slide}
-						className="train flex-shrink-0 relative w-full h-full"
-					>
-						<Image
-							src={`/images/${slide}.jpeg`}
-							alt={`${slide}`}
-							fill
-						/>
-					</div>
-				))}
-				<section>
-					{/* 이 버튼을 클릭하면
-          prevIndex -> prevIndex + 1 % slides.length */}
-					<button className="absolute top-[50%] left-[15%]">
-						<Image
-							src="/images/prev-button.png"
-							alt="previous button"
-							width={16}
-							height={28.59}
-						/>
-					</button>
-					<button className="absolute top-[50%] right-[15%]">
-						<Image
-							src="/images/next-button.png"
-							alt="next button"
-							width={16}
-							height={28.59}
-						/>
-					</button>
-				</section>
-			</div>
+		<div
+			className="slider-item-container relative flex overflow-hidden max-w-[1440px] m-auto"
+			onMouseEnter={() => setIsBannerHovered(true)}
+			onMouseLeave={() => setIsBannerHovered(false)}
+		>
+			{banners.map((slide) => (
+				<Image
+					key={slide}
+					src={`/images/${slide}.jpeg`}
+					alt={`${slide}`}
+					width={1920}
+					height={600}
+					style={{ transform: `translateX(${-100 * imageIndex}%)` }}
+					className="shrink-0 w-full h-full transition-transform duration-200 ease-in-out"
+				/>
+			))}
+			<button className={`absolute top-[50%] left-[15%] ${isBannerHovered ? 'block' : 'hidden'}`}>
+				<Image
+					src="/images/prev-button.png"
+					alt="previous button"
+					width={16}
+					height={28.59}
+					onClick={showPreviousBanner}
+				/>
+			</button>
+			<button className={`absolute top-[50%] right-[15%] ${isBannerHovered ? 'block' : 'hidden'}`}>
+				<Image
+					src="/images/next-button.png"
+					alt="next button"
+					width={16}
+					height={28.59}
+					onClick={showNextBanner}
+				/>
+			</button>
 		</div>
 	);
 };
