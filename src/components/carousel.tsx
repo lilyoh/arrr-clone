@@ -9,6 +9,7 @@ const duplicatedBanners = [banners[banners.length - 1], ...banners, banners[0]];
 const Carousel = () => {
 	const [currentBannerIndex, setCurrentBannerIndex] = useState<number>(1);
 	const [isBannerHovered, setIsBannerHovered] = useState<boolean>(false);
+	const [isButtonDisabled, setIsButtonDisable] = useState(false);
 	const durationDiv = useRef<HTMLDivElement>(null);
 
 	function showPreviousBanner() {
@@ -32,6 +33,8 @@ const Carousel = () => {
 			if (index === duplicatedBanners.length - 1) return 2;
 			return index + 1;
 		});
+
+		setIsButtonDisable(true);
 	}
 
 	useEffect(() => {
@@ -62,6 +65,8 @@ const Carousel = () => {
 						durationDiv.current.style.transitionDuration = '0ms';
 						setCurrentBannerIndex(duplicatedBanners.length - 2);
 					}
+
+					setIsButtonDisable(false);
 				}}
 			>
 				{duplicatedBanners.map((banner) => (
@@ -75,7 +80,10 @@ const Carousel = () => {
 					/>
 				))}
 			</div>
-			<button className={`absolute top-[50%] -translate-y-1/2 left-[15%] ${isBannerHovered ? 'block' : 'hidden'}`}>
+			<button
+				className={`absolute top-[50%] -translate-y-1/2 left-[15%] ${isBannerHovered ? 'block' : 'hidden'}`}
+				disabled={isButtonDisabled}
+			>
 				<Image
 					src="/images/prev-button.png"
 					alt="previous button"
@@ -84,7 +92,10 @@ const Carousel = () => {
 					onClick={showPreviousBanner}
 				/>
 			</button>
-			<button className={`absolute top-[50%] -translate-y-1/2 right-[15%] ${isBannerHovered ? 'block' : 'hidden'}`}>
+			<button
+				className={`absolute top-[50%] -translate-y-1/2 right-[15%] ${isBannerHovered ? 'block' : 'hidden'}`}
+				disabled={isButtonDisabled}
+			>
 				<Image
 					src="/images/next-button.png"
 					alt="next button"
